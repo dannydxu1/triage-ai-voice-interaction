@@ -1,11 +1,16 @@
-exports.handler = function(context, event, callback) {
+// Import the OpenAI library at the top of your file
+const openai = require('openai');
+
+exports.handler = async function(context, event, callback) {
+    // Initialize OpenAI with your API key
+    openai.apiKey = context.OPENAI_API_KEY; // Ensure your API key is stored securely
+
     // Create a TwiML Voice Response object to build the response
     const twiml = new Twilio.twiml.VoiceResponse();
 
     // If no previous conversation is present, or if the conversation is empty, start the conversation
     if (!event.request.cookies.convo) {
-        // Greet the user with a message using AWS Polly Neural voice
-
+        // Greet the user with a message using OpenAI's TTS service
         const audioUrl = await generateTTS("Hey! I'm Joanna 2.0 from Triage AI. How can I help you?");
         twiml.play(audioUrl);
     }
@@ -36,20 +41,20 @@ exports.handler = function(context, event, callback) {
     return callback(null, response);
 };
 
-  // Function to generate TTS audio using an external service
-  async function generateTTS(text) {
+// Function to generate TTS audio using OpenAI's TTS API
+async function generateTTS(text) {
     try {
-      // Replace this with your chosen TTS service API call
-      const ttsResponse = await openai.audio.speech.create({
-        model: "tts-1",
-        voice: "alloy",
-        input: text,
-      });
+        const ttsResponse = await openai.audio.speech.create({
+            model: "tts-1",
+            voice: "alloy",
+            input: text,
+        });
 
-      // The TTS service should return a URL to the generated audio file
-      return ttsResponse.data.audioUrl;
+        // The TTS service should return a URL to the generated audio file
+        return ttsResponse.audio_url; // Adjusted to match likely response structure
     } catch (error) {
-      console.error("Error during TTS generation:", error);
-      throw error;
+        console.error("Error during TTS generation:", error);
+        throw error;
     }
-  }
+}
+
