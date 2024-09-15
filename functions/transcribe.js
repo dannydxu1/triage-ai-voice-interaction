@@ -9,7 +9,7 @@ exports.handler = function(context, event, callback) {
           {
             voice: "Polly.Joanna-Neural",
           },
-          "Hey! I'm Joanna 2.0 from Triage AI. How can I help you?"
+          "Hey! I'm Joanna from Triage AI. How can I help you?"
         );
     }
 
