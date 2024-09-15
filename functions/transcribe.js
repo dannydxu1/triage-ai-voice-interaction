@@ -5,12 +5,9 @@ exports.handler = function(context, event, callback) {
     // If no previous conversation is present, or if the conversation is empty, start the conversation
     if (!event.request.cookies.convo) {
         // Greet the user with a message using AWS Polly Neural voice
-        twiml.say(
-          {
-            voice: "Polly.Joanna-Neural",
-          },
-          "Hey! I'm Joanna 2.0 from Triage AI. How can I help you?"
-        );
+
+        const audioUrl = await generateTTS("Hey! I'm Joanna 2.0 from Triage AI. How can I help you?");
+        twiml.play(audioUrl);
     }
 
     // Listen to the user's speech and pass the input to the /respond Function
@@ -38,3 +35,21 @@ exports.handler = function(context, event, callback) {
     // Return the response to Twilio
     return callback(null, response);
 };
+
+  // Function to generate TTS audio using an external service
+  async function generateTTS(text) {
+    try {
+      // Replace this with your chosen TTS service API call
+      const ttsResponse = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "alloy",
+        input: text,
+      });
+
+      // The TTS service should return a URL to the generated audio file
+      return ttsResponse.data.audioUrl;
+    } catch (error) {
+      console.error("Error during TTS generation:", error);
+      throw error;
+    }
+  }
