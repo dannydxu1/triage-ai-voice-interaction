@@ -31,7 +31,7 @@ exports.handler = async function(context, event, callback) {
 
 
   // Add the AI's response to the conversation history
-  conversation.push(aiResponse);
+  conversation.push({ role: "system", content: aiResponse });
 
   // Limit the conversation history to the last 20 messages; you can increase this if you want but keeping things short for this demonstration improves performance
   while (conversation.length > 20) {
@@ -77,7 +77,7 @@ exports.handler = async function(context, event, callback) {
         // Define system messages to model the AI
         const systemMessages = [{
                 role: "system",
-                content: 'You are a creative, funny, friendly and amusing AI assistant named Joanna. Please provide engaging but concise responses.'
+                content: 'You are a helpful assistant for emergency medical services. Do your best to be considerate but attempt to assess the situation and provide emergency guidance.'
             },
             {
                 role: "user",
