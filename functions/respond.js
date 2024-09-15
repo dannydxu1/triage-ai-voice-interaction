@@ -26,7 +26,7 @@ exports.handler = async function(context, event, callback) {
     const aiResponseText = await createChatCompletion(conversation);
 
     // Add the AI's response to the conversation history
-    conversation.push({ role: 'assistant', content: aiResponseText });
+    conversation.push({ role: 'system', content: aiResponseText });
 
     // Limit the conversation history to the last 20 messages
     while (conversation.length > 20) {
@@ -34,10 +34,10 @@ exports.handler = async function(context, event, callback) {
     }
 
     // Generate TTS audio using OpenAI's TTS API
-    const aiResponseAudioUrl = await generateTTS(aiResponseText);
+    const aiResponseAudio = await generateTTS(aiResponseText);
 
     // Play the generated audio response
-    twiml.play(aiResponseAudioUrl);
+    twiml.play(aiResponseAudio);
 
     // Redirect to the Function where the <Gather> is capturing the caller's speech
     twiml.redirect({
@@ -85,14 +85,14 @@ exports.handler = async function(context, event, callback) {
     // Function to generate TTS audio using OpenAI's TTS API
     async function generateTTS(text) {
         try {
-            const ttsResponse = await openai.audio.speech.create({
+            const mp3 = await openai.audio.speech.create({
                 model: "tts-1",
                 voice: "alloy",
                 input: text,
             });
 
             // The TTS service should return a URL to the generated audio file
-            return ttsResponse.audio_url; // Adjusted to match likely response structure
+            return mp3; // Adjusted to match likely response structure
         } catch (error) {
             console.error("Error during TTS generation:", error);
             throw error;
